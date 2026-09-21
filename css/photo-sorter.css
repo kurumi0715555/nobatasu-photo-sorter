@@ -1,0 +1,482 @@
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   行事写真仕分けツール — 固有スタイル
+   step-section / step-badge / step-desc / btn 系は common/css/components.css
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.step-section h3 {
+    font-size: var(--fs-h3);
+    color: var(--gray-darkest);
+    margin-bottom: var(--spacing-md);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.step-section h3 i {
+    color: var(--primary-color);
+}
+
+.step-desc {
+    font-size: var(--fs-sub);
+    color: var(--gray-darker);
+    margin-bottom: var(--spacing-md);
+    line-height: 1.7;
+}
+
+/* ━━ STEP 1: ドロップゾーン ━━ */
+.drop-zone {
+    border: 2.5px dashed var(--gray);
+    border-radius: var(--border-radius-large);
+    padding: var(--spacing-xl) var(--spacing-lg);
+    text-align: center;
+    background: var(--gray-lightest);
+    transition: var(--transition-smooth);
+}
+
+.drop-zone.drag-active {
+    border-color: var(--primary-color);
+    background: var(--info-tint);
+}
+
+.drop-zone > i {
+    font-size: 2.6rem;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-sm);
+}
+
+.drop-zone .drop-main {
+    font-size: var(--fs-lead);
+    font-weight: var(--fw-semibold);
+    color: var(--text-color);
+}
+
+.drop-zone .drop-sub {
+    font-size: var(--fs-caption);
+    color: var(--gray-dark);
+    margin: var(--spacing-xs) 0 var(--spacing-md);
+}
+
+.drop-buttons {
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.load-status {
+    margin-top: var(--spacing-md);
+    font-size: var(--fs-sub);
+    color: var(--gray-darker);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.load-status .spinner {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.fallback-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: var(--spacing-md);
+    font-size: var(--fs-sub);
+    color: var(--gray-darker);
+}
+
+.fallback-toggle input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary-color);
+}
+
+/* 読み込み後サマリ */
+.photo-summary {
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--info-tint);
+    border-radius: var(--border-radius);
+    font-size: var(--fs-sub);
+    color: var(--text-color);
+    line-height: 1.8;
+}
+
+.photo-summary strong {
+    color: var(--primary-color);
+}
+
+.photo-summary .summary-warn {
+    color: var(--warning-color);
+    font-weight: var(--fw-semibold);
+}
+
+.time-histogram {
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-md);
+    border: 1.5px solid var(--gray-lighter);
+    border-radius: var(--border-radius);
+    background: var(--white);
+}
+
+.histogram-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+    color: var(--gray-darkest);
+    font-size: var(--fs-sub);
+    font-weight: var(--fw-semibold);
+}
+
+.histogram-bars {
+    display: flex;
+    align-items: end;
+    gap: 4px;
+    min-height: 120px;
+    padding-top: var(--spacing-xs);
+}
+
+.histogram-bar {
+    flex: 1;
+    min-width: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.histogram-bar-fill {
+    width: 100%;
+    min-height: 4px;
+    border-radius: var(--border-radius-small) var(--border-radius-small) 0 0;
+    background: var(--primary-color);
+}
+
+.histogram-bar-count,
+.histogram-bar-time {
+    font-size: 0.68rem;
+    color: var(--gray-darker);
+    white-space: nowrap;
+}
+
+.histogram-empty {
+    font-size: var(--fs-sub);
+    color: var(--gray-darker);
+}
+
+/* ━━ STEP 2: 場面・行程入力 ━━ */
+.event-list-header,
+.event-row {
+    display: grid;
+    grid-template-columns: 140px 1fr 44px;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+.event-list-header {
+    padding: 0 var(--spacing-xs) var(--spacing-xs);
+    font-size: var(--fs-caption);
+    color: var(--gray-darker);
+    font-weight: var(--fw-semibold);
+}
+
+.event-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.event-row input[type="time"],
+.event-row input[type="text"] {
+    padding: 10px 12px;
+    border: 1.5px solid var(--gray);
+    border-radius: var(--border-radius-small);
+    font-family: inherit;
+    font-size: 0.95rem;
+    background: var(--white);
+    color: var(--text-color);
+    transition: border-color 0.2s;
+    width: 100%;
+}
+
+.event-row input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: var(--focus-ring);
+}
+
+.event-row .del-event-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--gray);
+    border-radius: var(--border-radius-small);
+    background: var(--white);
+    color: var(--gray-dark);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.event-row .del-event-btn:hover {
+    background: var(--danger-tint);
+    color: var(--danger-color);
+    border-color: var(--danger-color);
+}
+
+/* ━━ STEP 3: プレビュー ━━ */
+.preview-area {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.event-card {
+    border: 1.5px solid var(--gray);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    background: var(--white);
+}
+
+.event-card.is-unsorted {
+    border-color: var(--warning-color);
+    border-style: dashed;
+}
+
+.event-card.is-empty {
+    opacity: 0.6;
+}
+
+.event-card-head {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: 10px var(--spacing-md);
+    background: var(--primary-color);
+    color: var(--white);
+}
+
+.event-card.is-unsorted .event-card-head {
+    background: var(--warning-color);
+}
+
+.event-card.is-empty .event-card-head {
+    background: var(--gray-dark);
+}
+
+.event-card-head .ec-name {
+    font-weight: var(--fw-semibold);
+    font-size: 0.98rem;
+    flex: 1;
+    min-width: 0;
+    word-break: break-all;
+}
+
+.event-card-head .ec-time {
+    font-size: var(--fs-caption);
+    opacity: 0.9;
+    white-space: nowrap;
+}
+
+.event-card-head .ec-count {
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: var(--border-radius-pill);
+    padding: 2px 12px;
+    font-size: var(--fs-caption);
+    font-weight: var(--fw-bold);
+    white-space: nowrap;
+}
+
+.event-card-thumbs {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+    gap: 8px;
+    padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.ec-thumb {
+    border-radius: var(--border-radius-small);
+    overflow: hidden;
+    background: var(--gray-lighter);
+    border: 1px solid var(--gray-lighter);
+}
+
+.ec-thumb img {
+    width: 100%;
+    aspect-ratio: 1;
+    height: auto;
+    object-fit: cover;
+    display: block;
+}
+
+.ec-thumb .ec-thumb-name {
+    display: block;
+    background: var(--white);
+    color: var(--gray-darkest);
+    font-size: 0.68rem;
+    padding: 4px 6px 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ec-thumb-meta {
+    display: block;
+    padding: 0 6px 4px;
+    font-size: 0.65rem;
+    color: var(--gray-darker);
+}
+
+.ec-thumb select {
+    width: calc(100% - 10px);
+    min-height: 32px;
+    margin: 0 5px 6px;
+    border: 1px solid var(--gray);
+    border-radius: var(--border-radius-small);
+    background: var(--white);
+    font-size: 0.72rem;
+    color: var(--text-color);
+}
+
+.ec-more {
+    padding: var(--spacing-xs) var(--spacing-md) var(--spacing-sm);
+    font-size: var(--fs-caption);
+    color: var(--gray-darker);
+}
+
+.event-card .ec-empty-msg {
+    padding: var(--spacing-sm) var(--spacing-md) var(--spacing-md);
+    font-size: var(--fs-caption);
+    color: var(--gray-darker);
+}
+
+/* ━━ STEP 4: ZIP ━━ */
+.zip-options {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    margin-bottom: var(--spacing-md);
+}
+
+.zip-options label {
+    font-size: var(--fs-sub);
+    font-weight: var(--fw-semibold);
+    color: var(--gray-darkest);
+}
+
+.zip-options select {
+    min-width: 220px;
+    padding: 9px 12px;
+    border: 1.5px solid var(--gray);
+    border-radius: var(--border-radius-small);
+    background: var(--white);
+    color: var(--text-color);
+    font-family: inherit;
+}
+
+.preflight-panel {
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius);
+    background: var(--gray-lightest);
+    border: 1.5px solid var(--gray-lighter);
+    color: var(--text-color);
+    font-size: var(--fs-sub);
+    line-height: 1.7;
+}
+
+.preflight-panel.is-warning {
+    background: var(--warning-tint);
+    border-color: var(--warning-color);
+}
+
+.preflight-panel.is-danger {
+    background: var(--danger-tint);
+    border-color: var(--danger-color);
+}
+
+.preflight-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-weight: var(--fw-semibold);
+}
+
+.preflight-list {
+    margin: 0;
+    padding-left: 1.2em;
+}
+
+.zip-progress {
+    margin-top: var(--spacing-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    font-size: var(--fs-sub);
+    color: var(--gray-darker);
+}
+
+.zip-result {
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--success-tint);
+    border-radius: var(--border-radius);
+    font-size: var(--fs-sub);
+    color: var(--success-color);
+    text-align: center;
+    line-height: 1.8;
+}
+
+.zip-result .download-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: var(--spacing-sm);
+}
+
+/* ━━ 共通：アクションバー ━━ */
+.action-bar {
+    margin-top: var(--spacing-lg);
+    display: flex;
+    justify-content: center;
+}
+
+/* ━━ 使い方 code ━━ */
+.instructions .note code,
+.instructions ol code {
+    background: rgba(0, 96, 100, 0.1);
+    color: var(--primary-color);
+    padding: 2px 7px;
+    border-radius: var(--border-radius-small);
+    font-size: 0.9em;
+    font-family: var(--font-family-mono);
+}
+
+/* ━━ レスポンシブ ━━ */
+@media (max-width: 768px) {
+    .event-list-header,
+    .event-row {
+        grid-template-columns: 110px 1fr 40px;
+    }
+
+    .drop-buttons {
+        flex-direction: column;
+    }
+
+    .histogram-bars {
+        overflow-x: auto;
+        align-items: end;
+    }
+
+    .histogram-bar {
+        flex: 0 0 38px;
+    }
+}

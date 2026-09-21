@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="description" content="写真の撮影時刻（EXIF）をもとに、学校行事の写真を場面・行程ごとのフォルダに自動で仕分けしてZIP出力。すべてブラウザ内で完結し、写真は外部に送信しません。教員向け無料ツール。">
+
+    <!-- SEO設定 -->
+    
+    
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="common/css/common.css">
+    <link rel="stylesheet" href="common/css/modal.css">
+    <link rel="stylesheet" href="common/css/landscape-guard.css">
+    <link rel="stylesheet" href="css/photo-sorter.css">
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="common/vendor/fontawesome/css/fontawesome.css">
+<link rel="stylesheet" href="common/vendor/fontawesome/css/solid.css">
+<title>行事写真仕分けツール</title>
+<link rel="stylesheet" href="oss/standalone.css">
+<script defer src="oss/standalone.js"></script>
+</head>
+
+<body data-tablet-ok="true">
+    <!-- サイトラッパー -->
+    <div class="site-wrapper">
+        <!-- 左広告エリア -->
+        <aside class="ad-left"></aside>
+
+        <!-- メインコンテナ -->
+        <div class="container">
+            <!-- ヘッダー -->
+            <header>
+                <h1><i class="fas fa-photo-film"></i> 行事写真仕分けツール</h1>
+                <p class="subtitle">撮影時刻をもとに場面・行程ごとのフォルダへ自動で振り分け</p>
+            </header>
+
+            <!-- メインコンテンツ -->
+            <main>
+
+                <!-- 安全性バッジ -->
+                <div class="privacy-badge">
+                    <i class="fas fa-shield-halved"></i>
+                    <span>写真は<strong>あなたの端末の中だけ</strong>で処理します。インターネットへの送信・保存は一切行いません（位置情報も読み取りません）。</span>
+                </div>
+
+                <!-- STEP 1: 写真を読み込む -->
+                <section class="step-section" id="step1">
+                    <h3><span class="step-badge">STEP 1</span> <i class="fas fa-images"></i> 写真を読み込む</h3>
+                    <p class="step-desc">体育大会・修学旅行・合唱コンクールなど、学校行事で撮影した写真をまとめてドラッグ＆ドロップ、または選択してください。元の写真は変更されません。</p>
+
+                    <div class="drop-zone" id="dropZone">
+                        <i class="fas fa-cloud-arrow-up"></i>
+                        <p class="drop-main">ここに写真をドラッグ＆ドロップ</p>
+                        <p class="drop-sub">または</p>
+                        <div class="drop-buttons">
+                            <button class="btn btn-primary" id="selectFilesBtn">
+                                <i class="fas fa-image"></i> 写真を選択
+                            </button>
+                            <button class="btn btn-secondary" id="selectFolderBtn">
+                                <i class="fas fa-folder-open"></i> フォルダを選択
+                            </button>
+                        </div>
+                        <input type="file" id="fileInput" accept="image/jpeg,image/png,image/tiff,image/heic,image/heif" multiple hidden>
+                        <input type="file" id="folderInput" webkitdirectory hidden>
+                    </div>
+                    <label class="fallback-toggle">
+                        <input type="checkbox" id="useModifiedTime">
+                        <span>撮影時刻がない写真は、ファイル更新日時で仮判定する</span>
+                    </label>
+
+                    <div class="load-status" id="loadStatus"></div>
+                    <div class="photo-summary" id="photoSummary" style="display:none;"></div>
+                    <div class="time-histogram" id="timeHistogram" style="display:none;"></div>
+                </section>
+
+                <!-- STEP 2: 場面・行程の時間割を入力 -->
+                <section class="step-section" id="step2" style="display:none;">
+                    <h3><span class="step-badge">STEP 2</span> <i class="fas fa-list-check"></i> 場面・行程の時間割を入力</h3>
+                    <p class="step-desc">場面・行程の<strong>開始時刻</strong>と<strong>名前</strong>を入力します。各項目は「次の項目が始まるまで」を担当します（終了時刻の入力は不要です）。</p>
+
+                    <div class="event-list-header">
+                        <span class="evh-time">開始時刻</span>
+                        <span class="evh-name">場面・行程名</span>
+                        <span class="evh-act"></span>
+                    </div>
+                    <div class="event-list" id="eventList"></div>
+                    <button class="btn btn-secondary btn-small" id="addEventBtn">
+                        <i class="fas fa-plus"></i> 場面・行程を追加
+                    </button>
+
+                    <div class="action-bar">
+                        <button class="btn btn-primary btn-large" id="previewBtn">
+                            <i class="fas fa-wand-magic-sparkles"></i> 自動で振り分ける
+                        </button>
+                    </div>
+                </section>
+
+                <!-- STEP 3: 振り分けプレビュー -->
+                <section class="step-section" id="step3" style="display:none;">
+                    <h3><span class="step-badge">STEP 3</span> <i class="fas fa-folder-tree"></i> 振り分けプレビュー</h3>
+                    <p class="step-desc">場面・行程ごとの割り当て結果です。必要に応じて写真ごとに移動先を調整できます。</p>
+                    <div class="zip-options">
+                        <label for="fileNameMode">プレビュー・ZIP内のファイル名</label>
+                        <select id="fileNameMode">
+                            <option value="event-seq">場面名_001.jpg</option>
+                            <option value="time-original">撮影時刻_元ファイル名</option>
+                            <option value="original">元ファイル名を維持</option>
+                            <option value="seq-only">001.jpg</option>
+                        </select>
+                    </div>
+                    <div class="preview-area" id="previewArea"></div>
+                </section>
+
+                <!-- STEP 4: ダウンロード -->
+                <section class="step-section" id="step4" style="display:none;">
+                    <h3><span class="step-badge">STEP 4</span> <i class="fas fa-file-zipper"></i> ZIPをダウンロード</h3>
+                    <p class="step-desc">場面・行程ごとのフォルダにまとめたZIPファイルを作成します。解凍するとフォルダ分けされた状態で取り出せます。</p>
+                    <div class="preflight-panel" id="preflightPanel"></div>
+                    <div class="action-bar">
+                        <button class="btn btn-success btn-large" id="zipBtn">
+                            <i class="fas fa-download"></i> 行事写真ZIPを作成
+                        </button>
+                    </div>
+                    <div class="zip-progress" id="zipProgress" style="display:none;">
+                        <div class="spinner"></div>
+                        <span id="zipProgressText">ZIPを作成中...</span>
+                    </div>
+                    <div class="zip-result" id="zipResult" style="display:none;"></div>
+                </section>
+
+                <!-- 使い方 -->
+                <div class="instructions">
+                    <h3><i class="fas fa-info-circle"></i> 使い方</h3>
+                    <ol>
+                        <li><strong>写真を読み込む</strong>：学校行事の写真をまとめてドラッグ＆ドロップ、またはフォルダごと選択します。撮影時刻（EXIF）を自動で読み取ります。</li>
+                        <li><strong>場面・行程の時間割を入力</strong>：各場面の開始時刻と名前を入力します（例：<code>09:00 / 開会式</code>、<code>13:30 / 合唱 2年1組</code>）。終了時刻は次の項目の開始時刻から自動で決まります。</li>
+                        <li><strong>自動で振り分ける</strong>：撮影時刻をもとに、どの写真がどの場面・行程かを自動で判定します。必要に応じてプレビューで写真を別の場面へ移動できます。</li>
+                        <li><strong>ZIPをダウンロード</strong>：未分類や空の場面を確認し、ファイル名ルールを選んでからZIPを作成します。</li>
+                    </ol>
+                    <p class="note"><i class="fas fa-clock"></i> <strong>撮影時刻について</strong>：写真に記録された「撮影日時（EXIF）」を使います。撮影時刻が記録されていない写真は「未分類」フォルダにまとめます。必要な場合は、ファイル更新日時で仮判定できます。</p>
+                    <p class="note"><i class="fas fa-shield-halved"></i> <strong>安全性</strong>：すべてブラウザ内で完結し、写真はインターネットに送信されません。元の写真ファイルは変更されず、新しくZIPが作られるだけなので安心です。</p>
+                </div>
+
+            </main>
+
+            <!-- 水平広告エリア -->
+            <div class="ad-horizontal no-print">
+                <div class="ad-label">広告</div>
+                <div class="ad-horizontal-content">
+                    <i class="fas fa-rectangle-ad"></i>
+                    <p>728×90 レクタングル（大）バナー広告</p>
+                </div>
+            </div>
+
+            <!-- フッター -->
+            <footer></footer>
+        </div>
+
+        <!-- 右広告エリア -->
+        <aside class="ad-right"></aside>
+    </div>
+
+    <!-- 外部ライブラリ（バージョン固定 + SRI） -->
+    <script src="vendor/exifr/full.umd.min.js"
+            integrity="sha384-GqsRTy0JWDEKvfibA1TiYY0lGRodW4PS02lggVHvO/CNVs/zoNx+DNfjs1Ikisbz"
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="vendor/jszip/jszip.min.js"
+            integrity="sha384-+mbV2IY1Zk/X1p/nWllGySJSUN8uMs+gUAN10Or95UBH0fpj6GfKgPmgC5EXieXG"
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- 共通JS -->
+    <script src="common/js/common-modal.js"></script>
+    
+    
+    
+    
+    
+    <script type="module" src="dist/photo-sorter.js"></script>
+    <script src="common/js/landscape-guard.js"></script>
+</body>
+</html>
